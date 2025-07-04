@@ -76,7 +76,8 @@ class Form_Handler {
 	 * @return void
 	 */
 	public static function remove_item_action() {
-		if ( empty( $_GET['remove_compare_item'] ) || empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'wcboost-products-compare-remove-item' ) ) {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( empty( $_GET['remove_compare_item'] ) || empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'wcboost-products-compare-remove-item' ) ) {
 			return;
 		}
 
@@ -109,13 +110,14 @@ class Form_Handler {
 	 * @return void
 	 */
 	public static function clear_list_action() {
-		if ( empty( $_GET['clear_compare_list'] ) || empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'wcboost-products-compare-clear-list' ) ) {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( empty( $_GET['clear_compare_list'] ) || empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'wcboost-products-compare-clear-list' ) ) {
 			return;
 		}
 
 		wc_nocache_headers();
 
-		$list_id = wp_unslash( $_GET['clear_compare_list'] );
+		$list_id = sanitize_text_field( wp_unslash( $_GET['clear_compare_list'] ) );
 
 		if ( $list_id != Plugin::instance()->list->get_id() ) {
 			return;

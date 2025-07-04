@@ -88,6 +88,7 @@ class Frontend {
 	 * @return array
 	 */
 	public function add_noindex_robots( $robots ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! isset( $_GET['add_to_compare'] ) ) {
 			return $robots;
 		}
@@ -288,7 +289,10 @@ class Frontend {
 			$args['compare_items'] = array_filter( $items );
 
 			$fields = is_array( $params ) && ! empty( $params['compare_fields'] ) ? $params['compare_fields'] : [];
-			$args['compare_fields'] = $this->get_compare_fields( $fields );
+			$field_args = [
+				'hide_empty_attributes' => isset( $params['hide_empty_attributes'] ) ? $params['hide_empty_attributes'] : false,
+			];
+			$args['compare_fields'] = $this->get_compare_fields( $fields, $args['compare_items'], $field_args );
 		}
 
 		// Setup loop properties for tracking.
@@ -341,6 +345,8 @@ class Frontend {
 	 * The button to clear compare list.
 	 * This button is used for the default list only.
 	 *
+	 * @param array $args Optional. Arguments for the button.
+	 *
 	 * @return void
 	 */
 	public function compare_button_clear( $args = [] ) {
@@ -357,8 +363,9 @@ class Frontend {
 			$args['class'][] = $this->get_element_class_name( 'button' );
 		}
 
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo apply_filters(
-			'wcboost_products_compare_clear_link', // XSS: ok.
+			'wcboost_products_compare_clear_link',
 			sprintf(
 				'<a href="%s" class="%s" rel="nofollow">%s</a>',
 				esc_url( Helper::get_clear_url() ),
@@ -371,6 +378,8 @@ class Frontend {
 	/**
 	 * The button to open the compare page/popup.
 	 * This button is used for the default list only.
+	 *
+	 * @param array $args Optional. Arguments for the button.
 	 *
 	 * @return void
 	 */
@@ -392,8 +401,9 @@ class Frontend {
 			$args['class'][] = $this->get_element_class_name( 'button' );
 		}
 
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo apply_filters(
-			'wcboost_products_compare_open_link', // XSS: ok.
+			'wcboost_products_compare_open_link',
 			sprintf(
 				'<a href="%s" class="%s" rel="nofollow">%s</a>',
 				esc_url( wc_get_page_permalink( 'compare' ) ),
@@ -421,7 +431,7 @@ class Frontend {
 					<?php endif; ?>
 					<a href="#" class="wcboost-products-compare-popup__close" role="button">
 						<span class="wcboost-products-compare-popup__close-icon">
-							<?php echo Helper::get_icon( 'close', 20 ); ?>
+							<?php echo Helper::get_icon( 'close', 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						</span>
 						<span class="screen-reader-text"><?php esc_html_e( 'Close', 'wcboost-products-compare' ) ?></span>
 					</a>
@@ -455,7 +465,7 @@ class Frontend {
 		<div id="wcboost-products-compare-bar" class="<?php echo esc_attr( implode( ' ', $class ) ); ?>" data-compare="<?php echo esc_attr( $behavior ); ?>" aria-hidden="true">
 			<div class="wcboost-products-compare-bar__toggle">
 				<span class="wcboost-products-compare-bar__toggle-button" role="button" aria-label="<?php esc_attr_e( 'View compared products', 'wcboost-products-compare' ); ?>">
-					<?php echo Helper::get_icon( 'chevron-up' ); ?>
+					<?php echo Helper::get_icon( 'chevron-up' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					<?php esc_html_e( 'Compare products', 'wcboost-products-compare' ); ?>
 				</span>
 			</div>
@@ -482,9 +492,18 @@ class Frontend {
 	 *
 	 * @since 1.0.3
 	 *
+	 * @param array $fields Optional. Array of fields to compare.
+	 * @param array $products Optional. Array of products to check for empty attributes
+	 * @param array $args Optional. Additional arguments for field processing.
+	 *                    - hide_empty_attributes: Whether to hide empty attributes (default: false)
+	 *
 	 * @return array
 	 */
-	public function get_compare_fields( $fields = [] ) {
+	public function get_compare_fields( $fields = [], $products = [], $args = [] ) {
+		$args = wp_parse_args( $args, [
+			'hide_empty_attributes' => false,
+		] );
+
 		$persists = [
 			'remove'    => '',
 			'thumbnail' => '',
@@ -530,7 +549,55 @@ class Frontend {
 			$compare_fields = array_merge( $persists, $defaults );
 		}
 
+		// Filter out attributes that are empty across all compared products
+		if ( $args['hide_empty_attributes'] && ! empty( $products ) ) {
+			$compare_fields = $this->filter_empty_attributes( $compare_fields, $products );
+		}
+
 		return apply_filters( 'wcboost_products_compare_fields', $compare_fields );
+	}
+
+	/**
+	 * Filter out attributes that are empty across all compared products
+	 *
+	 * @since 1.0.5
+	 *
+	 * @param array $fields Optional. Array of fields to compare.
+	 * @param array $products Optional. Array of products to check for empty attributes
+	 *
+	 * @return array
+	 */
+	private function filter_empty_attributes( $fields, $products ) {
+		$filtered_fields = [];
+
+		foreach ( $fields as $field_key => $field_label ) {
+			// Skip non-attribute fields
+			if ( ! taxonomy_is_product_attribute( $field_key ) ) {
+				$filtered_fields[ $field_key ] = $field_label;
+				continue;
+			}
+
+			// Check if any product has a value for this attribute
+			$has_value = false;
+			foreach ( $products as $product ) {
+				if ( ! is_a( $product, 'WC_Product' ) ) {
+					continue;
+				}
+
+				$attribute_value = $product->get_attribute( $field_key );
+				if ( ! empty( $attribute_value ) ) {
+					$has_value = true;
+					break;
+				}
+			}
+
+			// Only include the attribute field if at least one product has a value
+			if ( $has_value ) {
+				$filtered_fields[ $field_key ] = $field_label;
+			}
+		}
+
+		return $filtered_fields;
 	}
 
 	/**
@@ -538,9 +605,9 @@ class Frontend {
 	 *
 	 * @since 1.0.4
 	 *
-	 * @param  string $field
-	 * @param  \WC_Product $product
-	 * @param  array  $args
+	 * @param  string $field The field to render.
+	 * @param  \WC_Product $product The product to render.
+	 * @param  array  $args Arguments for the field content (optional).
 	 *
 	 * @return void
 	 */
@@ -562,9 +629,9 @@ class Frontend {
 
 			case 'thumbnail':
 				if ( ! $product->is_visible() ) {
-					echo $product->get_image(); // PHPCS: XSS ok.
+					echo $product->get_image(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				} else {
-					printf( '<a href="%s">%s</a>', esc_url( $product->get_permalink() ), $product->get_image() ); // PHPCS: XSS ok.
+					printf( '<a href="%s">%s</a>', esc_url( $product->get_permalink() ), $product->get_image() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				}
 				break;
 
@@ -578,13 +645,13 @@ class Frontend {
 
 			case 'rating':
 				if ( wc_review_ratings_enabled() ) {
-					echo wc_get_rating_html( $product->get_average_rating() ); // WordPress.XSS.EscapeOutput.OutputNotEscaped.
+					echo wc_get_rating_html( $product->get_average_rating() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				}
 				break;
 
 			case 'price':
 				if ( $price_html = $product->get_price_html() ) {
-					printf( '<span class="price">%s</span>', $price_html ); // PHPCS: XSS ok.
+					printf( '<span class="price">%s</span>', $price_html ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				}
 				break;
 
@@ -600,7 +667,7 @@ class Frontend {
 
 			case 'dimensions':
 				if ( $product->has_dimensions() ) {
-					echo wc_format_dimensions( $product->get_dimensions( false ) );
+					echo wc_format_dimensions( $product->get_dimensions( false ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				} else {
 					esc_html_e( 'N/A', 'wcboost-products-compare' );
 				}
@@ -608,7 +675,7 @@ class Frontend {
 
 			case 'weight':
 				if ( $product->has_weight() ) {
-					echo wc_format_weight( $product->get_weight() );
+					echo wc_format_weight( $product->get_weight() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				} else {
 					esc_html_e( 'N/A', 'wcboost-products-compare' );
 				}
@@ -627,6 +694,7 @@ class Frontend {
 			default:
 				// Product attribute.
 				if ( taxonomy_is_product_attribute( $field ) ) {
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					echo apply_filters( 'wcboost_products_compare_attribute_field', $product->get_attribute( $field ), $field, $product );
 				} else {
 					do_action( 'wcboost_products_compare_custom_field', $field, $product, $args );

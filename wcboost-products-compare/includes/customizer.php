@@ -193,7 +193,7 @@ class Customizer {
 			$wp_customize->add_panel( 'wcboost', [
 				'priority'   => 200,
 				'capability' => 'manage_woocommerce',
-				'title'      => __( 'WCBoost', 'wcboost' ),
+				'title'      => __( 'WCBoost', 'wcboost-products-compare' ),
 			] );
 		}
 	}

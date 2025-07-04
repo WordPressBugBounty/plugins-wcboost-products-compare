@@ -93,7 +93,7 @@ jQuery( function( $ ) {
 		var self = event ? event.data.productsCompareFragments : this;
 		var data = { time: new Date().getTime() };
 
-		if ( 'yes' === wcboost_products_compare_fragments_params.refresh_on_load || includeButtons ) {
+		if ( ! supportStorage && ( 'yes' === wcboost_products_compare_fragments_params.refresh_on_load || includeButtons ) ) {
 			data.product_button_ids = self.getProductIds();
 		}
 

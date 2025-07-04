@@ -13,8 +13,9 @@ defined( 'ABSPATH' ) || exit;
 
 global $product;
 
+// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 echo apply_filters(
-	'wcboost_products_compare_loop_add_to_compare_link', // WPCS: XSS ok.
+	'wcboost_products_compare_loop_add_to_compare_link',
 	sprintf(
 		'<a href="%s" class="%s" role="button" %s>
 			%s

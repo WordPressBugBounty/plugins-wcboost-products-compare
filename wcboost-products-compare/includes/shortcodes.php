@@ -28,22 +28,31 @@ class Shortcodes {
 	public static function compare_page( $atts ) {
 		$atts = shortcode_atts(
 			[
-				'product_ids' => empty( $_GET['compare_products'] ) ? '' : trim( $_GET['compare_products'] ),
-				'fields'      => '',
+				'product_ids'           => '',
+				'fields'                => '',
+				'hide_empty_attributes' => false,
 			],
 			$atts,
 			'wcboost_compare'
 		);
 
-		$product_ids = ! empty( $atts['product_ids'] ) ? array_map( 'intval', explode( ',', $atts['product_ids'] ) ) : [];
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( empty( $atts['product_ids'] ) && ! empty( $_GET['compare_products'] ) ) {
+			$product_ids = array_map( 'intval', explode( ',', wc_clean( wp_unslash( $_GET['compare_products'] ) ) ) );
+		} else {
+			$product_ids = array_map( 'intval', explode( ',', trim( $atts['product_ids'] ) ) );
+		}
+		// phpcs:enable
+
 		$product_ids = array_filter( $product_ids );
 		$list        = empty( $product_ids ) ? Plugin::instance()->list : new Compare_List( $product_ids );
 		$fields      = array_map( 'trim', explode( ',', $atts['fields'] ) );
 		$fields      = array_map( 'strtolower', $fields );
 		$args        = [
-			'compare_list'   => $list,
-			'compare_fields' => array_filter( $fields ),
-			'return_url'     => apply_filters( 'wcboost_products_compare_return_to_shop_redirect', wc_get_page_permalink( 'shop' ) ),
+			'compare_list'          => $list,
+			'compare_fields'        => array_filter( $fields ),
+			'hide_empty_attributes' => \wc_string_to_bool( $atts['hide_empty_attributes'] ),
+			'return_url'            => apply_filters( 'wcboost_products_compare_return_to_shop_redirect', wc_get_page_permalink( 'shop' ) ),
 		];
 
 		$args = apply_filters( 'wcboost_products_compare_template_args', $args, $list );

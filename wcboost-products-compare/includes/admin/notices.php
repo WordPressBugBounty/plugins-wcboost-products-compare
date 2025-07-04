@@ -106,8 +106,8 @@ class Notices {
 	 * @return void
 	 */
 	public function reset_notices_on_request() {
-		// Reset templates notice.
-		if ( isset( $_GET['action'] ) && 'clear_template_cache' == $_GET['action'] ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( isset( $_GET['action'] ) && 'clear_template_cache' == wp_unslash( $_GET['action'] ) ) {
 			$this->reset_templates_notice();
 		}
 	}

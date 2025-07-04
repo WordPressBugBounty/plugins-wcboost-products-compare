@@ -28,11 +28,12 @@ class Ajax_Handler {
 	 * @since 1.0.0
 	 */
 	public static function add_to_compare() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( ! isset( $_POST['product_id'] ) ) {
 			return;
 		}
 
-		$product_id     = absint( $_POST['product_id'] );
+		$product_id     = absint( $_POST['product_id'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$product        = wc_get_product( $product_id );
 		$product_status = get_post_status( $product_id );
 
@@ -68,7 +69,7 @@ class Ajax_Handler {
 	 * AJAX remove compare item
 	 */
 	public static function remove_compare_item() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$item_key = isset( $_POST['item_key'] ) ? wc_clean( wp_unslash( $_POST['item_key'] ) ) : '';
 		$product_id = Plugin::instance()->list->remove_item( $item_key );
 
@@ -90,11 +91,11 @@ class Ajax_Handler {
 	 * @since 1.0.0
 	 */
 	public static function get_compare_fragments() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$fragments = self::get_refreshed_fragments();
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( ! empty( $_POST['product_button_ids'] ) ) {
-			$product_ids = array_map( 'absint', $_POST['product_button_ids'] );
+			$product_ids = array_map( 'absint', $_POST['product_button_ids'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 			foreach ( $product_ids as $id ) {
 				if ( $id ) {

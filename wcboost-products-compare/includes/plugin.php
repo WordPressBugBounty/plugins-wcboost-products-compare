@@ -7,13 +7,6 @@ namespace WCBoost\ProductsCompare;
 final class Plugin {
 
 	/**
-	 * Plugin properties
-	 *
-	 * @var array
-	 */
-	private $props = [];
-
-	/**
 	 * The product list to compare
 	 *
 	 * @var Compare_List
@@ -45,14 +38,14 @@ final class Plugin {
 	 * Cloning is forbidden.
 	 */
 	public function __clone() {
-		_doing_it_wrong( __FUNCTION__, __( 'Foul!', 'wcboost-products-compare' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Foul!', 'wcboost-products-compare' ), '1.0.0' );
 	}
 
 	/**
 	 * Unserializing instances of this class is forbidden.
 	 */
 	public function __wakeup() {
-		_doing_it_wrong( __FUNCTION__, __( 'Foul!', 'wcboost-products-compare' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Foul!', 'wcboost-products-compare' ), '1.0.0' );
 	}
 
 	/**
@@ -67,11 +60,7 @@ final class Plugin {
 	public function __get( $prop ) {
 		switch ( $prop ) {
 			case 'version':
-				if ( empty( $this->props['version'] ) ) {
-					$plugin = get_plugin_data( WCBOOST_PRODUCTS_COMPARE_FILE );
-					$this->props['version'] = $plugin['Version'];
-				}
-				return $this->props['version'];
+				return WCBOOST_PRODUCTS_COMPARE_VERSION;
 				break;
 		}
 	}

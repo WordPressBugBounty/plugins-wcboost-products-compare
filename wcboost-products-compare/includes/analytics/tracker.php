@@ -217,7 +217,8 @@ class Tracker {
 			return;
 		}
 
-		$source = ! empty( $_REQUEST['wcboost_source'] ) ? $_REQUEST['wcboost_source'] : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$source = ! empty( $_REQUEST['wcboost_source'] ) ? wc_clean( wp_unslash( $_REQUEST['wcboost_source'] ) ) : '';
 
 		if ( 'compare' != $source ) {
 			return;

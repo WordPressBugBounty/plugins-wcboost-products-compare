@@ -121,6 +121,11 @@ table.compare_table {
 			margin-bottom: 0;
 		}
 	}
+
+	.wcboost-products-compare__tools {
+		overflow: hidden;
+		padding: 1rem 0;
+	}
 }
 
 @media screen and (max-width: 782px) {
@@ -265,6 +270,7 @@ table.compare_table {
 	position: fixed;
 	background-color: #f9f9f9;
 	transition: transform 250ms ease-out;
+	z-index: 99;
 
 	.wcboost-products-compare-widget__products {
 		list-style: none;

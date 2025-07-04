@@ -151,6 +151,7 @@ class Helper {
 				$referer = wc_get_page_permalink( 'compare' );
 			}
 
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			if ( isset( $_REQUEST['popup'] ) ) {
 				$params['_wp_http_referer'] = wc_get_page_permalink( 'compare' );
 			}
@@ -180,6 +181,7 @@ class Helper {
 				$referer = wc_get_page_permalink( 'compare' );
 			}
 
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			if ( isset( $_REQUEST['popup'] ) ) {
 				$params['_wp_http_referer'] = wc_get_page_permalink( 'compare' );
 			}

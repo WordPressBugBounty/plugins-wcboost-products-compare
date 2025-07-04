@@ -51,10 +51,10 @@ class Products_Compare_Widget extends \WP_Widget {
 
 		$instance = wp_parse_args( $instance, $this->defaults );
 
-		echo $args['before_widget']; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+		echo $args['before_widget']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 		if ( $title = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base ) ) {
-			echo $args['before_title'] . $title . $args['after_title']; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+			echo $args['before_title'] . $title . $args['after_title']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		$wrapper_class = 'wcboost-products-compare-widget__content-wrapper';
@@ -68,7 +68,7 @@ class Products_Compare_Widget extends \WP_Widget {
 
 		echo '</div>';
 
-		echo $args['after_widget']; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+		echo $args['after_widget']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
@@ -81,18 +81,18 @@ class Products_Compare_Widget extends \WP_Widget {
 		?>
 
 		<p>
-			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php esc_html_e( 'Title:', 'wcboost-products-compare' ); ?></label>
-			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $instance['title'] ); ?>" />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title:', 'wcboost-products-compare' ); ?></label>
+			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $instance['title'] ); ?>" />
 		</p>
 
 		<p>
-			<input id="<?php echo $this->get_field_id( 'hide_if_empty' ); ?>" name="<?php echo $this->get_field_name( 'hide_if_empty' ); ?>" type="checkbox" value="1" <?php checked( 1, $instance['hide_if_empty'] ) ?> />
-			<label for="<?php echo $this->get_field_id( 'hide_if_empty' ); ?>"><?php esc_html_e( 'Hide if the compare list empty', 'wcboost-products-compare' ); ?></label>
+			<input id="<?php echo esc_attr( $this->get_field_id( 'hide_if_empty' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'hide_if_empty' ) ); ?>" type="checkbox" value="1" <?php checked( 1, $instance['hide_if_empty'] ) ?> />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'hide_if_empty' ) ); ?>"><?php esc_html_e( 'Hide if the compare list empty', 'wcboost-products-compare' ); ?></label>
 		</p>
 
 		<p>
-			<label for="<?php echo $this->get_field_id( 'compare_behaviour' ); ?>"><?php esc_html_e( 'Compare button behaviour', 'wcboost-products-compare' ); ?></label>
-			<select class="widefat" id="<?php echo $this->get_field_id( 'compare_behaviour' ); ?>" name="<?php echo $this->get_field_name( 'compare_behaviour' ); ?>">
+			<label for="<?php echo esc_attr( $this->get_field_id( 'compare_behaviour' ) ); ?>"><?php esc_html_e( 'Compare button behaviour', 'wcboost-products-compare' ); ?></label>
+			<select class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'compare_behaviour' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'compare_behaviour' ) ); ?>">
 				<option value="page" <?php selected( 'page', $instance['compare_behaviour'] ) ?>><?php esc_attr_e( 'Open the compare page', 'wcboost-products-compare' ); ?></option>
 				<option value="popup" <?php selected( 'popup', $instance['compare_behaviour'] ) ?>><?php esc_attr_e( 'Open the compare popup', 'wcboost-products-compare' ); ?></option>
 			</select>
@@ -110,7 +110,7 @@ class Products_Compare_Widget extends \WP_Widget {
 	 * @return array
 	 */
 	public function update( $new_instance, $old_instance ) {
-		$new_instance['title']         = strip_tags( $new_instance['title'] );
+		$new_instance['title']         = wp_strip_all_tags( $new_instance['title'] );
 		$new_instance['hide_if_empty'] = isset( $new_instance['hide_if_empty'] );
 
 		if( ! in_array( $new_instance['compare_behaviour'], [ 'page', 'popup' ] ) ) {

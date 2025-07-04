@@ -313,6 +313,7 @@
 		self.$content = $( '.wcboost-products-compare-popup__content', self.$popup );
 
 		self.togglePopup = self.togglePopup.bind( self );
+		self.closeOnKeyPress = self.closeOnKeyPress.bind( self );
 
 		$( document.body )
 			.on( 'click', '.wcboost-products-compare-popup-trigger', { comparePopup: self }, self.triggerOpenPopup )
@@ -422,15 +423,25 @@
 			self.$popup.stop( true, true ).fadeIn( 150, function() {
 				self.$popup.addClass( 'wcboost-products-compare-popup--open' );
 			} );
+			self.$popup.attr( 'aria-hidden', 'false' );
 
+			$( document ).on( 'keydown', self.closeOnKeyPress );
 			triggerEvent( document.body, 'products_compare_popup_opened' );
 		} else {
 			self.$popup.stop( true, true ).fadeOut( 150, function() {
 				self.$popup.removeClass( 'wcboost-products-compare-popup--open' );
 				self.opened = false;
 			} );
+			self.$popup.attr( 'aria-hidden', 'true' );
 
+			$( document ).off( 'keydown', self.closeOnKeyPress );
 			triggerEvent( document.body, 'products_compare_popup_closed' );
+		}
+	}
+
+	WCBoostComparePopup.prototype.closeOnKeyPress = function( event ) {
+		if ( event.key === "Escape" && this.opened ) {
+			this.togglePopup( false );
 		}
 	}
 
@@ -557,10 +568,9 @@
 
 				var fragments = response.data.fragments;
 
-				$( document.body ).trigger( 'removed_from_compare', [ null, fragments ] );
-
-				// Trigger refresh fragments, include buttons.
-				$( document.body ).trigger( 'products_compare_fragments_refresh', [ true ] );
+				$( document.body )
+					.trigger( 'wcboost_compare_item_removed', [ response.data ] )
+					.trigger( 'removed_from_compare', [ null, fragments ] );
 			},
 			complete: function() {
 				unblock( $widget );
@@ -609,6 +619,10 @@
 		var self = this;
 
 		self.$bar = $( node );
+		self.isOpen = self.$bar.hasClass( 'wcboost-products-compare-bar--open' );
+
+		self.open = self.open.bind( self );
+		self.close = self.close.bind( self );
 
 		self.$bar.on( 'click', '.wcboost-products-compare-bar__toggle-button', { compareBar: self }, self.toggleCompareBar );
 	}
@@ -618,7 +632,21 @@
 
 		var self = event.data.compareBar;
 
-		self.$bar.toggleClass( 'wcboost-products-compare-bar--open' );
+		self.isOpen ? self.close() : self.open();
+	}
+
+	WCBoostCompareBar.prototype.open = function() {
+		this.$bar.addClass( 'wcboost-products-compare-bar--open' );
+		this.$bar.attr( 'aria-hidden', 'false' );
+
+		this.isOpen = true;
+	}
+
+	WCBoostCompareBar.prototype.close = function() {
+		this.$bar.removeClass( 'wcboost-products-compare-bar--open' );
+		this.$bar.attr( 'aria-hidden', 'true' );
+
+		this.isOpen = false;
 	}
 
 	// Document ready.

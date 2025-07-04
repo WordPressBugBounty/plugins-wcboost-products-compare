@@ -1,12 +1,12 @@
 === WCBoost - Products Compare ===
 Contributors: wcboost
 Tags: woocommerce, compare, product, product compare, woocommerce compare
-Tested up to: 6.6
-Stable tag: 1.0.7
+Tested up to: 6.8
+Stable tag: 1.0.8
 Requires PHP: 7.0
 Requires at least: 4.5
 WC requires at least: 3.0.0
-WC tested up to: 9.1
+WC tested up to: 9.9
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -109,6 +109,13 @@ Following the standards of WordPress and WooCommerce, you can find all the setti
 
 
 == Changelog ==
+
+= 1.0.8 =
+* New - Adds 'hide_empty_attributes' option to the shortcode.
+* Fixed - Z-index issue with the compare bar for better overlay positioning.
+* Fixed - Accessibility improvements for the compare popup and bar.
+* Fixed - Popup can now be closed with the ESC key for better user experience.
+* Fixed - Widget item removal now properly updates session storage.
 
 = 1.0.7 =
 * Fixed - Cannot clear the comparison list.
