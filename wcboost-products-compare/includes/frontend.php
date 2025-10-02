@@ -1,5 +1,11 @@
 <?php
+/**
+ * Handle frontend actions.
+ */
+
 namespace WCBoost\ProductsCompare;
+
+defined( 'ABSPATH' ) || exit;
 
 use WCBoost\ProductsCompare\Helper;
 
@@ -66,7 +72,7 @@ class Frontend {
 		add_action( 'wcboost_products_compare_widget_buttons', [ $this, 'compare_button_clear' ], 20 );
 
 		// Compare bar.
-		if ( get_option( 'wcboost_products_compare_bar' ) && ! Helper::is_compare_page() ) {
+		if ( get_option( 'wcboost_products_compare_bar' ) && ! Helper::is_compare_page() && Helper::can_user_view_site() ) {
 			add_action( 'wp_footer', [ $this, 'compare_bar' ] );
 		}
 	}

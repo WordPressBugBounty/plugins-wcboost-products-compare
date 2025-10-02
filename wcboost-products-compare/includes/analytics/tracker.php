@@ -1,10 +1,16 @@
 <?php
+/**
+ * Monitor comparison data
+ */
+
 namespace WCBoost\ProductsCompare\Analytics;
+
+defined( 'ABSPATH' ) || exit;
 
 use WCBoost\ProductsCompare\Analytics\Data;
 
 /**
- * Monitor comparison data
+ * Tracker class
  */
 class Tracker {
 

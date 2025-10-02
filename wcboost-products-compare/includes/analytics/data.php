@@ -1,5 +1,11 @@
 <?php
+/**
+ * Analytics usage data.
+ */
+
 namespace WCBoost\ProductsCompare\Analytics;
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Data class for analytics

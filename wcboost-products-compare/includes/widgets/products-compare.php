@@ -1,4 +1,8 @@
 <?php
+/**
+ * Classic widget for products compare.
+ */
+
 namespace WCBoost\ProductsCompare\Widget;
 
 defined( 'ABSPATH' ) || exit;

@@ -2,6 +2,7 @@
 /**
  * Compatible with other plugins/themes
  */
+
 namespace WCBoost\ProductsCompare;
 
 defined( 'ABSPATH' ) || exit;

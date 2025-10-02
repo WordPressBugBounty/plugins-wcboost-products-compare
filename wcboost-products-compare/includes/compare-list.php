@@ -1,4 +1,7 @@
 <?php
+/**
+ * Compare products list
+ */
 namespace WCBoost\ProductsCompare;
 
 /**

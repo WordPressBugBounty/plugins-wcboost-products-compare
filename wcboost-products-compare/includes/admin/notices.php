@@ -6,6 +6,8 @@
  */
 namespace WCBoost\ProductsCompare\Admin;
 
+defined( 'ABSPATH' ) || exit;
+
 use WCBoost\ProductsCompare\Plugin;
 
 /**

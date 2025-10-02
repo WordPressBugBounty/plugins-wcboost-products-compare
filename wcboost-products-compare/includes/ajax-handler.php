@@ -1,8 +1,15 @@
 <?php
+/**
+ * Handle AJAX actions.
+ */
+
 namespace WCBoost\ProductsCompare;
 
-use MailPoet\AdminPages\Pages\Help;
+defined( 'ABSPATH' ) || exit;
 
+/**
+ * Ajax handler class.
+ */
 class Ajax_Handler {
 
 	/**

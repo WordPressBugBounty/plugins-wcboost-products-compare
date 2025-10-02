@@ -1,5 +1,11 @@
 <?php
+/**
+ * Manage settings for the plugin.
+ */
+
 namespace WCBoost\ProductsCompare\Admin;
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Products compare settings

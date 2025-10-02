@@ -1,7 +1,8 @@
 <?php
 /**
- * Install plugin
+ * Handle plugin installation.
  */
+
 namespace WCBoost\ProductsCompare;
 
 defined( 'ABSPATH' ) || exit;

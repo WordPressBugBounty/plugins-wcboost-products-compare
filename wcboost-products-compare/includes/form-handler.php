@@ -1,7 +1,11 @@
 <?php
+/**
+ * Handle form actions.
+ */
+
 namespace WCBoost\ProductsCompare;
 
-use Exception;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Form handler class

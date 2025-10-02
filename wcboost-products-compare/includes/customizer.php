@@ -1,4 +1,8 @@
 <?php
+/**
+ * Handle Customizer settings for plugin.
+ */
+
 namespace WCBoost\ProductsCompare;
 
 defined( 'ABSPATH' ) || exit;

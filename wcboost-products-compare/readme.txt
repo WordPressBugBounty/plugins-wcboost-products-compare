@@ -2,11 +2,11 @@
 Contributors: wcboost
 Tags: woocommerce, compare, product, product compare, woocommerce compare
 Tested up to: 6.8
-Stable tag: 1.0.8
+Stable tag: 1.0.9
 Requires PHP: 7.0
 Requires at least: 4.5
-WC requires at least: 3.0.0
-WC tested up to: 9.9
+WC requires at least: 3.0
+WC tested up to: 10.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -109,6 +109,9 @@ Following the standards of WordPress and WooCommerce, you can find all the setti
 
 
 == Changelog ==
+
+= 1.0.9 =
+* Fixed - Do not show the compare bar if the user is restricted by coming soon mode.
 
 = 1.0.8 =
 * New - Adds 'hide_empty_attributes' option to the shortcode.

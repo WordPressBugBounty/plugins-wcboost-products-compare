@@ -1,5 +1,11 @@
 <?php
+/**
+ * Helper functions for the plugin.
+ */
+
 namespace WCBoost\ProductsCompare;
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Helper class
@@ -19,6 +25,70 @@ class Helper {
 		}
 
 		return is_page( $page_id );
+	}
+
+	/**
+	 * Check if current user can view the site (not restricted by WooCommerce Coming Soon mode).
+	 *
+	 * @since 1.0.9
+	 *
+	 * @return bool True if user can view the site, false if restricted by coming soon mode.
+	 */
+	public static function can_user_view_site() {
+		// If WooCommerce's Coming Soon classes don't exist, assume site is viewable
+		if ( ! class_exists( 'Automattic\WooCommerce\Internal\ComingSoon\ComingSoonHelper' ) ) {
+			return true;
+		}
+
+		// Check if Launch Your Store feature is enabled
+		if ( class_exists( 'Automattic\WooCommerce\Admin\Features\Features' ) ) {
+			if ( ! \Automattic\WooCommerce\Admin\Features\Features::is_enabled( 'launch-your-store' ) ) {
+				return true;
+			}
+		}
+
+		// Initialize coming soon helper
+		$coming_soon_helper = wc_get_container()->get( \Automattic\WooCommerce\Internal\ComingSoon\ComingSoonHelper::class );
+
+		// If site is live, everyone can view
+		if ( $coming_soon_helper->is_site_live() ) {
+			return true;
+		}
+
+		// Administrators and shop managers can always view
+		if ( current_user_can( 'manage_woocommerce' ) ) {
+			return true;
+		}
+
+		// Check if the current page is in coming soon mode
+		if ( ! $coming_soon_helper->is_current_page_coming_soon() ) {
+			return true;
+		}
+
+		// Check for coming soon exclusion filter
+		if ( apply_filters( 'woocommerce_coming_soon_exclude', false ) ) {
+			return true;
+		}
+
+		// Check private link access
+		if ( get_option( 'woocommerce_private_link' ) === 'yes' ) {
+			$share_key = get_option( 'woocommerce_share_key' );
+
+			// Check URL parameter
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( isset( $_GET['woo-share'] ) && $share_key === $_GET['woo-share'] ) {
+				return true;
+			}
+
+			// Check cookie
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			if ( isset( $_COOKIE['woo-share'] ) && $share_key === wp_unslash( $_COOKIE['woo-share'] ) ) {
+				return true;
+			}
+		}
+
+		// User is restricted by coming soon mode
+		return false;
 	}
 
 	/**

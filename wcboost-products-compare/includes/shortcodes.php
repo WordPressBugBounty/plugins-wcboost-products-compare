@@ -1,9 +1,13 @@
 <?php
+/**
+ * Products compare shortcodes
+ */
+
 namespace WCBoost\ProductsCompare;
 
-use WCBoost\ProductsCompare\Analytics\Data;
-
 defined( 'ABSPATH' ) || exit;
+
+use WCBoost\ProductsCompare\Analytics\Data;
 
 /**
  * Shortcodes class

@@ -1,5 +1,11 @@
 <?php
+/**
+ * Main plugin class
+ */
+
 namespace WCBoost\ProductsCompare;
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Plugin main class
