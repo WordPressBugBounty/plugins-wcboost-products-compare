@@ -41,7 +41,7 @@ class Frontend {
 	/**
 	 * Class constructor
 	 */
-	public function __construct() {
+	protected function __construct() {
 		add_action( 'wp', [ $this, 'template_hooks' ] );
 		add_action( 'wp', [ $this, 'add_nocache_headers' ] );
 		add_filter( 'wp_robots', [ $this, 'add_noindex_robots' ], 20 );

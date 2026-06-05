@@ -17,14 +17,14 @@ class Compatibility {
 	/**
 	 * The single instance of the class
 	 *
-	 * @var WCBoost\ProductsCompare\Compatibility
+	 * @var static
 	 */
 	protected static $_instance = null; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
 	 * Main instance
 	 *
-	 * @return WCBoost\ProductsCompare\Compatibility
+	 * @return static
 	 */
 	public static function instance() {
 		if ( null === self::$_instance ) {
@@ -37,7 +37,7 @@ class Compatibility {
 	/**
 	 * Class constructor
 	 */
-	public function __construct() {
+	protected function __construct() {
 		add_action( 'init', [ $this, 'check_compatible_hooks' ] );
 	}
 

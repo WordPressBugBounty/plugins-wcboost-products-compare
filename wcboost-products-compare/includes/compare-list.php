@@ -168,12 +168,18 @@ class Compare_List {
 	/**
 	 * Add a new product to the list and update the session
 	 *
-	 * @param  int | WC_Product $product Product ID or object.
+	 * @param  int | \WC_Product $product Product ID or object.
 	 *
 	 * @return int | bool TRUE if successful, FALSE otherwise
 	 */
 	public function add_item( $product ) {
-		$product_id = is_a( $product, 'WC_Product' ) ? $product->get_id() : $product;
+		$product = is_a( $product, 'WC_Product' ) ? $product : wc_get_product( $product );
+
+		if ( ! $product || 'publish' !== $product->get_status() ) {
+			return false;
+		}
+
+		$product_id = $product->get_id();
 		$key        = Helper::generate_item_key( $product_id );
 
 		if ( ! $this->has_item( $product ) ) {

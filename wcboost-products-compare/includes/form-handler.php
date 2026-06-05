@@ -40,7 +40,8 @@ class Form_Handler {
 		$product_id     = absint( wp_unslash( $_REQUEST['add_to_compare'] ) );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$adding_product = wc_get_product( $product_id );
 
-		if ( ! $adding_product ) {
+		// Only published products can be added.
+		if ( ! $adding_product || 'publish' !== $adding_product->get_status() ) {
 			return;
 		}
 

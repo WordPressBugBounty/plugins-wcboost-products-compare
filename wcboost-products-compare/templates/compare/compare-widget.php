@@ -6,7 +6,10 @@
  *
  * @author  WCBoost
  * @package WCBoost\ProductsCompare\Templates
- * @version 1.0.5
+ * @version 1.1.1
+ *
+ * @var array $compare_items List of product IDs in the compare list.
+ * @var array $args Arguments passed to the widget, including 'list_class' and 'show_rating'.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -25,7 +28,7 @@ do_action( 'wcboost_products_compare_widget_before_contents' );
 		foreach ( $compare_items as $item_key => $product_id ) :
 			$_product = wc_get_product( $product_id );
 
-			if ( $_product && $_product->exists() ) {
+			if ( $_product && $_product->exists() && 'publish' === $_product->get_status() ) {
 				$product_permalink = $_product->is_visible() ? $_product->get_permalink() : '';
 				?>
 				<li class="wcboost-products-compare-widget__item wcboost-products-compare-widget-item">
